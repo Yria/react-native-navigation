@@ -111,17 +111,17 @@ class WelcomeScreen extends Component {
       sideMenu: {
         left: {
           container: {
-            name: 'navigation.playground.TextScreen',
+            name: 'navigation.playground.SideMenuScreen',
             passProps: {
-              text: 'This is a left side menu screen'
+              side: 'left'
             }
           }
         },
         right: {
           container: {
-            name: 'navigation.playground.TextScreen',
+            name: 'navigation.playground.SideMenuScreen',
             passProps: {
-              text: 'This is a right side menu screen'
+              side: 'right'
             }
           }
         }
@@ -163,26 +163,38 @@ class WelcomeScreen extends Component {
     Navigation.push(this.props.containerId, {
       topTabs: [
         {
-          container: {
-            name: 'navigation.playground.TextScreen',
-            passProps: {
-              text: 'This is top tab 1'
+          name: 'navigation.playground.TopTabOptionsScreen',
+          passProps: {
+            title: 'Tab 1',
+            text: 'This is top tab 1'
+          },
+          navigationOptions: {
+            topTab: {
+              title: 'Tab 1'
             }
           }
         },
         {
-          container: {
-            name: 'navigation.playground.TextScreen',
-            passProps: {
-              text: 'This is top tab 2'
+          name: 'navigation.playground.TopTabScreen',
+          passProps: {
+            title: 'Tab 2',
+            text: 'This is top tab 2'
+          },
+          navigationOptions: {
+            topTab: {
+              title: 'Tab 2'
             }
           }
         },
         {
-          container: {
-            name: 'navigation.playground.TextScreen',
-            passProps: {
-              text: 'This is top tab 3'
+          name: 'navigation.playground.TopTabScreen',
+          passProps: {
+            title: 'Tab 3',
+            text: 'This is top tab 3'
+          },
+          navigationOptions: {
+            topTab: {
+              title: 'Tab 3'
             }
           }
         }

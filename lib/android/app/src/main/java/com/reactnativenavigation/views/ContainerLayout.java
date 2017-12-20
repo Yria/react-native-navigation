@@ -1,31 +1,34 @@
 package com.reactnativenavigation.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.RestrictTo;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.reactnativenavigation.parse.NavigationOptions;
+import com.reactnativenavigation.presentation.OptionsPresenter;
 import com.reactnativenavigation.viewcontrollers.ContainerViewController.IReactView;
 
-public class ContainerView extends LinearLayout implements IReactView {
+@SuppressLint("ViewConstructor")
+public class ContainerLayout extends LinearLayout implements ReactContainer {
 
 	private TopBar topBar;
 	private IReactView reactView;
+	private final OptionsPresenter optionsPresenter;
 
-	public ContainerView(Context context, IReactView reactView) {
+	public ContainerLayout(Context context, IReactView reactView) {
 		super(context);
 		this.topBar = new TopBar(context);
 		this.reactView = reactView;
-		initViews();
+        optionsPresenter = new OptionsPresenter(topBar, this);
+        initViews();
 	}
 
 	private void initViews() {
 	    setOrientation(VERTICAL);
 		addView(topBar);
 		addView(reactView.asView());
-	}
-
-	public ContainerView(Context context) {
-		super(context);
 	}
 
 	@Override
@@ -53,11 +56,14 @@ public class ContainerView extends LinearLayout implements IReactView {
 		reactView.sendContainerStop();
 	}
 
-	public TopBar getTopBar() {
-		return topBar;
-	}
+    @Override
+    public void applyOptions(NavigationOptions options) {
+        optionsPresenter.applyOptions(options);
+    }
 
-	public IReactView getReactView() {
-		return reactView;
-	}
+    @Override
+    @RestrictTo(RestrictTo.Scope.TESTS)
+    public TopBar getTopBar() {
+        return topBar;
+    }
 }

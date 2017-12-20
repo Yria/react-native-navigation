@@ -1,25 +1,76 @@
 package com.reactnativenavigation.viewcontrollers.toptabs;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
-import android.view.ViewGroup;
+import android.view.View;
 
+import com.reactnativenavigation.parse.NavigationOptions;
+import com.reactnativenavigation.presentation.NavigationOptionsListener;
+import com.reactnativenavigation.viewcontrollers.ContainerViewController;
 import com.reactnativenavigation.viewcontrollers.ViewController;
-import com.reactnativenavigation.views.TopTabCreator;
+import com.reactnativenavigation.views.TopTab;
 
-public class TopTabController extends ViewController {
-    private String name;
-    private TopTabCreator topTabCreator;
+public class TopTabController extends ViewController implements NavigationOptionsListener {
 
-    public TopTabController(Activity activity, String id, String name, TopTabCreator topTabCreator) {
+    private final String containerName;
+    private ContainerViewController.ReactViewCreator viewCreator;
+    private final NavigationOptions options;
+    private TopTab topTab;
+    private boolean isSelectedTab;
+
+    public TopTabController(Activity activity, String id, String name, ContainerViewController.ReactViewCreator viewCreator, NavigationOptions initialOptions) {
         super(activity, id);
-        this.name = name;
-        this.topTabCreator = topTabCreator;
+        this.containerName = name;
+        this.viewCreator = viewCreator;
+        this.options = initialOptions;
     }
 
-    @NonNull
     @Override
-    protected ViewGroup createView() {
-        return (ViewGroup) topTabCreator.create(getActivity(), getId(), name);
+    public void onViewAppeared() {
+        super.onViewAppeared();
+        isSelectedTab = true;
+        applyOptions(options);
+        topTab.sendContainerStart();
+    }
+
+    @Override
+    public void applyOptions(NavigationOptions options) {
+        getParentController().applyOptions(options);
+    }
+
+    @Override
+    public void onViewDisappear() {
+        super.onViewDisappear();
+        isSelectedTab = false;
+        topTab.sendContainerStop();
+    }
+
+    @Override
+    protected boolean isViewShown() {
+        return super.isViewShown() && isSelectedTab;
+    }
+
+    @Override
+    public View createView() {
+        topTab = new TopTab(
+                getActivity(),
+                viewCreator.create(getActivity(), getId(), containerName)
+        );
+        return topTab;
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        if (topTab != null) topTab.destroy();
+        topTab = null;
+    }
+
+    @Override
+    public void mergeNavigationOptions(NavigationOptions options) {
+        this.options.mergeWith(options);
+    }
+
+    String getTabTitle() {
+        return options.topTabOptions.title;
     }
 }

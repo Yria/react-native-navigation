@@ -3,6 +3,7 @@
 #import "RNNNavigationController.h"
 #import "RNNTabBarController.h"
 #import "RNNTopBarOptions.h"
+#import "RNNSideMenuController.h"
 
 const NSInteger BLUR_STATUS_TAG = 78264801;
 const NSInteger BLUR_TOPBAR_TAG = 78264802;
@@ -27,6 +28,7 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 	self.topBar = [[RNNTopBarOptions alloc] initWithDict:[navigationOptions objectForKey:@"topBar"]];
 	self.bottomTabs = [[RNNTabBarOptions alloc] initWithDict:[navigationOptions objectForKey:@"bottomTabs"]];
 	self.tabItem = [[RNNTabItemOptions alloc] initWithDict:[navigationOptions objectForKey:@"bottomTab"]];
+	self.sideMenu = [[RNNSideMenuOptions alloc] initWithDict:[navigationOptions objectForKey:@"sideMenu"]];
 	
 	return self;
 }
@@ -39,6 +41,8 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 			[self.bottomTabs mergeWith:[otherOptions objectForKey:key]];
 		} else if ([key isEqualToString:@"bottomTab"]) {
 			[self.tabItem mergeWith:[otherOptions objectForKey:key]];
+		} else if ([key isEqualToString:@"sideMenu"]) {
+			[self.sideMenu mergeWith:[otherOptions objectForKey:@"sideMenu"]];
 		} else {
 			[self setValue:[otherOptions objectForKey:key] forKey:key];
 		}
@@ -47,7 +51,7 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 
 -(void)applyOn:(UIViewController*)viewController {
 	if (self.topBar) {
-		if(self.topBar.backgroundColor) {
+		if (self.topBar.backgroundColor) {
 			UIColor* backgroundColor = [RCTConvert UIColor:self.topBar.backgroundColor];
 			viewController.navigationController.navigationBar.barTintColor = backgroundColor;
 		} else {
@@ -158,6 +162,14 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 		if (self.topBar.translucent) {
 			viewController.navigationController.navigationBar.translucent = [self.topBar.translucent boolValue];
 		}
+
+		if (self.topBar.drawUnder) {
+			if ([self.topBar.drawUnder boolValue]) {
+				viewController.edgesForExtendedLayout |= UIRectEdgeTop;
+			} else {
+				viewController.edgesForExtendedLayout &= ~UIRectEdgeTop;
+			}
+		}
 		
 		if (self.topBar.noBorder) {
 			if ([self.topBar.noBorder boolValue]) {
@@ -167,6 +179,10 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 				viewController.navigationController.navigationBar
 				.shadowImage = nil;
 			}
+		}
+		
+		if (self.topBar.testID) {
+			viewController.navigationController.navigationBar.accessibilityIdentifier = self.topBar.testID;
 		}
 	}
 	
@@ -186,6 +202,18 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 		if (self.bottomTabs.hidden) {
 			[((RNNTabBarController *)viewController.tabBarController) setTabBarHidden:[self.bottomTabs.hidden boolValue] animated:[self.bottomTabs.animateHide boolValue]];
 		}
+		
+		if (self.bottomTabs.testID) {
+			viewController.tabBarController.tabBar.accessibilityIdentifier = self.bottomTabs.testID;
+		}
+		
+		if (self.bottomTabs.drawUnder) {
+			if ([self.bottomTabs.drawUnder boolValue]) {
+				viewController.edgesForExtendedLayout |= UIRectEdgeBottom;
+			} else {
+				viewController.edgesForExtendedLayout &= ~UIRectEdgeBottom;
+			}
+		}
 	}
 	
 	if (self.statusBarBlur) {
@@ -202,6 +230,27 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 				[curBlurView removeFromSuperview];
 			}
 		}
+	}
+  
+  RNNSideMenuController* sideMenuController = (RNNSideMenuController*)UIApplication.sharedApplication.delegate.window.rootViewController;
+	if ([sideMenuController isKindOfClass:[RNNSideMenuController class]]) {
+		if (self.sideMenu.leftSideVisible) {
+			if (self.sideMenu.leftSideVisible.boolValue) {
+				[sideMenuController showSideMenu:MMDrawerSideLeft animated:YES];
+			} else {
+				[sideMenuController hideSideMenu:MMDrawerSideLeft animated:YES];
+			}
+		}
+		
+		if (self.sideMenu.rightSideVisible) {
+			if (self.sideMenu.rightSideVisible.boolValue) {
+				[sideMenuController showSideMenu:MMDrawerSideRight animated:YES];
+			} else {
+				[sideMenuController hideSideMenu:MMDrawerSideRight animated:YES];
+			}
+		}
+		
+		[self.sideMenu resetOptions];
 	}
 	
 	[self applyTabBarItemOptions:viewController];
@@ -227,7 +276,7 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 		}
 		
 		[self.tabItem resetOptions];
-	}
+  }
 }
 
 - (UIInterfaceOrientationMask)supportedOrientations {
