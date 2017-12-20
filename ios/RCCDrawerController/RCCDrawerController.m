@@ -86,9 +86,17 @@ UIViewController *rightViewController = nil;
         self.showsShadow = ([self.drawerStyle[@"drawerShadow"] boolValue]) ? YES : NO;
     }
     
-    NSNumber *leftDrawerWidth = self.drawerStyle[@"leftDrawerWidth"];
-    if (leftDrawerWidth) {
-        self.maximumLeftDrawerWidth = self.view.bounds.size.width * MIN(1, (leftDrawerWidth.floatValue/100.0));
+    // NSNumber *leftDrawerWidth = self.drawerStyle[@"leftDrawerWidth"];
+    // if (leftDrawerWidth) {
+    //    self.maximumLeftDrawerWidth = self.view.bounds.size.width * MIN(1, (leftDrawerWidth.floatValue/100.0));
+    // }
+    YGValue leftDrawerWidth = [RCTConvert YGValue:self.drawerStyle[@"leftDrawerWidth"]];
+    if (leftDrawerWidth.unit != YGUnitUndefined) {
+        if (leftDrawerWidth.unit == YGUnitPercent) {
+            self.maximumLeftDrawerWidth = self.view.bounds.size.width * MIN(1, (leftDrawerWidth.value/100.0));
+        } else if(leftDrawerWidth.unit == YGUnitPoint) {
+            self.maximumLeftDrawerWidth = MIN(self.view.bounds.size.width, leftDrawerWidth.value);
+        }
     }
     
     NSNumber *rightDrawerWidth = self.drawerStyle[@"rightDrawerWidth"];

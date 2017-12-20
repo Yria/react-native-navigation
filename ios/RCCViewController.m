@@ -593,6 +593,18 @@ const NSInteger TRANSPARENT_NAVBAR_TAG = 78264803;
   BOOL navBarTranslucentBool = navBarTranslucent ? [navBarTranslucent boolValue] : NO;
   if (navBarTranslucentBool || navBarBlurBool) {
     viewController.navigationController.navigationBar.translucent = YES;
+
+    UIColor *color = navBarBackgroundColor != (id)[NSNull null] ? [RCTConvert UIColor:navBarBackgroundColor] : nil;
+
+    CGRect rect = CGRectMake(0, 0, 1, 1);
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, color ? [color CGColor] : UIColor.clearColor.CGColor);
+    CGContextFillRect(context, rect);
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    [viewController.navigationController.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
   } else {
     viewController.navigationController.navigationBar.translucent = NO;
   }

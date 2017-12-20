@@ -16,6 +16,9 @@
 
 @implementation RCCCustomTitleView
 
+-(CGSize) intrinsicContentSize {
+    return self.frame.size;
+}
 
 -(instancetype)initWithFrame:(CGRect)frame subView:(UIView*)subView alignment:(NSString*)alignment {
     _initialWidth = frame.size.width;
@@ -38,7 +41,8 @@
     [super layoutSubviews];
     
     if ([self.subViewAlign isEqualToString:@"fill"]) {
-        self.subView.frame = self.bounds;
+        // self.subView.frame = self.bounds;
+        self.bounds = self.subView.bounds;
     }
     else {
         
