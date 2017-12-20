@@ -2,7 +2,7 @@
 #import <UIKit/UIKit.h>
 #import "RNNTopBarOptions.h"
 #import "RNNTabBarOptions.h"
-#import "RNNUITabBarItem.h"
+#import "RNNTabItemOptions.h"
 
 extern const NSInteger BLUR_STATUS_TAG;
 extern const NSInteger BLUR_TOPBAR_TAG;
@@ -22,7 +22,7 @@ extern const NSInteger TOP_BAR_TRANSPARENT_TAG;
 @property (nonatomic, strong) NSNumber* popGesture;
 @property (nonatomic, strong) RNNTopBarOptions* topBar;
 @property (nonatomic, strong) RNNTabBarOptions* bottomTabs;
-@property (nonatomic, strong) RNNUITabBarItem* tabItem;
+@property (nonatomic, strong) RNNTabItemOptions* tabItem;
 
 
 - (UIInterfaceOrientationMask)supportedOrientations;
@@ -34,6 +34,6 @@ extern const NSInteger TOP_BAR_TRANSPARENT_TAG;
 -(void)mergeWith:(NSDictionary*)otherOptions;
 -(void)storeOriginalTopBarImages:(UIViewController*)viewController;
 
-- (void)applyTabBarItem:(UIViewController*)viewController;
+- (void)applyTabBarItemOptions:(UIViewController*)viewController;
 
 @end

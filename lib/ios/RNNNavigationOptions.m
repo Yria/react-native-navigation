@@ -26,7 +26,7 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 	self.rightButtons = [navigationOptions objectForKey:@"rightButtons"];
 	self.topBar = [[RNNTopBarOptions alloc] initWithDict:[navigationOptions objectForKey:@"topBar"]];
 	self.bottomTabs = [[RNNTabBarOptions alloc] initWithDict:[navigationOptions objectForKey:@"bottomTabs"]];
-	self.tabItem = [[RNNUITabBarItem alloc] initWithDictionary:[navigationOptions objectForKey:@"tabItem"]];
+	self.tabItem = [[RNNTabItemOptions alloc] initWithDict:[navigationOptions objectForKey:@"bottomTab"]];
 	
 	return self;
 }
@@ -37,7 +37,7 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 			[self.topBar mergeWith:[otherOptions objectForKey:key]];
 		} else if ([key isEqualToString:@"bottomTabs"]) {
 			[self.bottomTabs mergeWith:[otherOptions objectForKey:key]];
-		} else if ([key isEqualToString:@"tabItem"]) {
+		} else if ([key isEqualToString:@"bottomTab"]) {
 			[self.tabItem mergeWith:[otherOptions objectForKey:key]];
 		} else {
 			[self setValue:[otherOptions objectForKey:key] forKey:key];
@@ -180,14 +180,6 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 	}
 	
 	if (self.bottomTabs) {
-		if (self.bottomTabs.tabBadge) {
-			NSString *badge = [RCTConvert NSString:self.bottomTabs.tabBadge];
-			if (viewController.navigationController) {
-				viewController.navigationController.tabBarItem.badgeValue = badge;
-			} else {
-				viewController.tabBarItem.badgeValue = badge;
-			}
-		}
 		if (self.bottomTabs.currentTabIndex) {
 			[viewController.tabBarController setSelectedIndex:[self.bottomTabs.currentTabIndex unsignedIntegerValue]];
 		}
@@ -212,12 +204,29 @@ const NSInteger TOP_BAR_TRANSPARENT_TAG = 78264803;
 		}
 	}
 	
-	[self applyTabBarItem:viewController];
+	[self applyTabBarItemOptions:viewController];
 }
 
-- (void)applyTabBarItem:(UIViewController*)viewController {
+- (void)applyTabBarItemOptions:(UIViewController*)viewController {
 	if (self.tabItem) {
-		[viewController.navigationController setTabBarItem:self.tabItem];
+		if (self.tabItem.title || self.tabItem.icon) {
+			[viewController.navigationController setTabBarItem:[[UITabBarItem alloc] initWithTitle:self.tabItem.title image:[RCTConvert UIImage:self.tabItem.icon] tag:self.tabItem.tag]];
+		}
+		
+		if (self.tabItem.tabBadge) {
+			NSString *badge = [RCTConvert NSString:self.tabItem.tabBadge];
+			if (viewController.navigationController) {
+				viewController.navigationController.tabBarItem.badgeValue = badge;
+			} else {
+				viewController.tabBarItem.badgeValue = badge;
+			}
+		}
+		
+		if (self.tabItem.visible) {
+			[viewController.tabBarController setSelectedIndex:[viewController.tabBarController.viewControllers indexOfObject:viewController]];
+		}
+		
+		[self.tabItem resetOptions];
 	}
 }
 
