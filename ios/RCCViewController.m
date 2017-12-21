@@ -672,7 +672,8 @@ const NSInteger TRANSPARENT_NAVBAR_TAG = 78264803;
       
       self.navigationItem.titleView.backgroundColor = [UIColor clearColor];
       self.navigationItem.titleView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-      self.navigationItem.titleView.clipsToBounds = YES;
+      self.navigationItem.titleView.clipsToBounds = NO;
+      self.navigationItem.hidesBackButton = YES;
     }
   }
 }
