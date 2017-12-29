@@ -665,7 +665,7 @@ const NSInteger TRANSPARENT_NAVBAR_TAG = 78264803;
       
       RCTBridge *bridge = ((RCTRootView*)self.view).bridge;
       
-      NSDictionary *initialProps = self.navigatorStyle[@"navBarCustomViewInitialProps"];
+      NSMutableDictionary *initialProps = self.navigatorStyle[@"navBarCustomViewInitialProps"];
       [initialProps setObject:self.navigatorStyle[@"navigatorID"] forKey:@"navigatorID"];
       RCTRootView *reactView = [[RCTRootView alloc] initWithBridge:bridge moduleName:navBarCustomView initialProperties:initialProps];
       
