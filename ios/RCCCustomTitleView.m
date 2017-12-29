@@ -40,7 +40,11 @@
     
     if ([self.subViewAlign isEqualToString:@"fill"]) {
         // self.subView.frame = self.bounds;
-        self.bounds = self.subView.bounds;
+        if(@available(iOS 11.0, *)) {
+            self.superview.bounds = self.subView.bounds;
+        } else {
+            self.bounds = self.subView.bounds;
+        }
     }
     else {
         
