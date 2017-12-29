@@ -180,7 +180,7 @@ const NSInteger TRANSPARENT_NAVBAR_TAG = 78264803;
   
   self.navigatorStyle = [NSMutableDictionary dictionaryWithDictionary:[[RCCManager sharedInstance] getAppStyle]];
   [self.navigatorStyle addEntriesFromDictionary:navigatorStyle];
-
+  [self.navigatorStyle setObject:[props objectForKey:@"navigatorID"] forKey:@"navigatorID"];
   
   [self setStyleOnInit];
   
@@ -659,6 +659,7 @@ const NSInteger TRANSPARENT_NAVBAR_TAG = 78264803;
       RCTBridge *bridge = ((RCTRootView*)self.view).bridge;
       
       NSDictionary *initialProps = self.navigatorStyle[@"navBarCustomViewInitialProps"];
+      [initialProps setObject:self.navigatorStyle[@"navigatorID"] forKey:@"navigatorID"];
       RCTRootView *reactView = [[RCTRootView alloc] initWithBridge:bridge moduleName:navBarCustomView initialProperties:initialProps];
       
       RCCCustomTitleView *titleView = [[RCCCustomTitleView alloc] initWithFrame:self.navigationController.navigationBar.bounds
